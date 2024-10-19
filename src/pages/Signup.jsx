@@ -1,55 +1,77 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-} from "firebase/auth";
-import { auth } from "../firebase";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth } from "../firebase"; // Firebase configuration
 import styled from "styled-components";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state for the form
+  const [loading, setLoading] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic form validation
+    if (!email || !password || !confirmPassword) {
+      alert("Please fill in all fields");
+      return;
+    }
+
     if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
 
-    setLoading(true); // Disable button during request
+    if (password.length < 6) {
+      alert("Password should be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log("Signed up as:", user.email);
 
       // Send email verification
       await sendEmailVerification(user);
+      setIsEmailSent(true);
 
+      // Show message for successful signup
       alert("Sign-up successful! Please check your email for verification.");
-      navigate("/login"); // Navigate to login page after successful sign-up
+
+      // Clear input fields
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
+      // Do NOT navigate automatically, wait for email verification
     } catch (error) {
-      if (error.code === "auth/weak-password") {
-        alert("Password should be at least 6 characters.");
-      } else if (error.code === "auth/email-already-in-use") {
-        alert("Email is already in use.");
-      } else if (error.code === "auth/invalid-email") {
-        alert("Invalid email address.");
-      } else {
-        console.error("Error signing up:", error);
-        alert("Error during sign up. Please try again.");
+      let errorMessage;
+
+      switch (error.code) {
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters.";
+          break;
+        case "auth/email-already-in-use":
+          errorMessage = "Email is already in use.";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address.";
+          break;
+        default:
+          errorMessage = "Error during sign up. Please try again.";
+          console.error("Error signing up:", error);
       }
+
+      alert(errorMessage);
     } finally {
-      setLoading(false); // Re-enable the button after request finishes
+      setLoading(false);
     }
   };
 
@@ -57,7 +79,7 @@ const Signup = () => {
     <Container>
       <LeftPanel>
         <LogoContainer>
-          <LogoImage src="/logo.png" alt="Mentor Logo" />
+          <LogoImage src="logo.png" alt="Mentor Logo" />
           <LogoText>
             Mentor<span>Mate</span>
           </LogoText>
@@ -92,12 +114,18 @@ const Signup = () => {
               {loading ? "Signing up..." : "Sign Up"}
             </Button>
             <LoginLink>
-              Already have an account?{" "}
+              Already signed up? Click here to{" "}
               <LoginLinkText onClick={() => navigate("/login")}>
-                Log in here
+                Log in
               </LoginLinkText>
             </LoginLink>
           </Form>
+          {isEmailSent && (
+            <VerificationMessage>
+              A verification email has been sent to {email}. Please verify your
+              email before logging in.
+            </VerificationMessage>
+          )}
         </SignupForm>
       </RightPanel>
     </Container>
@@ -106,18 +134,25 @@ const Signup = () => {
 
 export default Signup;
 
-// Styled Components
+// Styled components for styling
+const VerificationMessage = styled.p`
+  margin-top: 20px;
+  color: #0a8f00;
+`;
+
 const Container = styled.div`
   display: flex;
-  height: 100vh;
+  margin-top: 100px;
+  height: 90vh;
 `;
 
 const LeftPanel = styled.div`
   background-color: #e0f4ff;
   width: 40%;
+  height: 400px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 `;
 
 const LogoContainer = styled.div`
@@ -141,8 +176,8 @@ const LogoText = styled.h1`
 const RightPanel = styled.div`
   width: 60%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  height: 450px;
 `;
 
 const SignupForm = styled.form`
@@ -172,6 +207,11 @@ const Input = styled.input`
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
+
+  &:focus {
+    border-color: #0a8f00;
+    outline: none;
+  }
 `;
 
 const Button = styled.button`
@@ -182,6 +222,7 @@ const Button = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
@@ -196,6 +237,7 @@ const LoginLink = styled.p`
 const LoginLinkText = styled.span`
   color: #0a8f00;
   cursor: pointer;
+  
   &:hover {
     text-decoration: underline;
   }

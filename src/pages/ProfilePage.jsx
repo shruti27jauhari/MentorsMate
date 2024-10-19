@@ -5,27 +5,28 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const ProfilePage = () => {
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  const [buttonStatus, setButtonStatus] = useState("Schedule"); // Initial button state
+  const [buttonStatus, setButtonStatus] = useState("Schedule");
   const [selectedDate, setSelectedDate] = useState(null);
+  const [isFollowed, setIsFollowed] = useState(false); // New state for follow status
 
-  // Predefined Google Meet link (can be generated and assigned by mentor)
   const googleMeetLink = "https://meet.google.com/evv-bwmj-bni";
 
   const handleScheduleClick = () => {
-    // Show the calendar when the schedule button is clicked
     setIsCalendarVisible(true);
   };
 
   const handleDateChange = (date) => {
-    // Set the selected date and change the button state
     setSelectedDate(date);
     setButtonStatus("Awaiting Confirmation");
     setIsCalendarVisible(false);
   };
 
   const handleConfirmation = () => {
-    // Simulate confirmation by changing the button state
     setButtonStatus("Scheduled");
+  };
+
+  const toggleFollow = () => {
+    setIsFollowed((prev) => !prev); // Toggle follow status
   };
 
   return (
@@ -38,7 +39,14 @@ const ProfilePage = () => {
             <Name>Prof. Aanand Raje</Name>
             <Designation>HoD vrt, Rajasthan</Designation>
             <Rating>4.7 ⭐⭐⭐⭐</Rating>
-            <FollowButton>Follow</FollowButton>
+            <FollowButton
+              onClick={toggleFollow} // Call toggleFollow on button click
+              style={{
+                backgroundColor: isFollowed ? "#32CD32" : "#3f63ff", // Change color based on follow status
+              }}
+            >
+              {isFollowed ? "Following" : "Follow"} {/* Update button text */}
+            </FollowButton>
           </ProfileInfo>
         </ProfileCard>
         <StatsCard>
@@ -89,7 +97,6 @@ const ProfilePage = () => {
             {buttonStatus}
           </ScheduleButton>
 
-          {/* Google Meet button appears only when the status is 'Scheduled' */}
           {buttonStatus === "Scheduled" && (
             <GoogleMeetButton href={googleMeetLink} target="_blank">
               Join Google Meet
@@ -269,7 +276,6 @@ const Rating = styled.p`
 `;
 
 const FollowButton = styled.button`
-  background-color: #3f63ff;
   color: white;
   padding: 8px 16px;
   border: none;
@@ -309,20 +315,20 @@ const Expertise = styled.div`
 `;
 
 const ExpertiseTitle = styled.h4`
-  font-size: 18px;
+  font-size: 16px;
   margin-bottom: 10px;
 `;
 
 const ExpertiseTags = styled.div`
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 5px;
 `;
 
 const Tag = styled.span`
   background-color: #e0e0e0;
-  padding: 5px 10px;
   border-radius: 5px;
+  padding: 5px 10px;
 `;
 
 const ScheduleCard = styled.div`
@@ -334,18 +340,19 @@ const ScheduleCard = styled.div`
 `;
 
 const ScheduleTitle = styled.h4`
-  font-size: 18px;
   margin-bottom: 10px;
 `;
 
 const AvailableDate = styled.p`
-  margin-bottom: 20px;
-  color: #333;
+  margin: 10px 0;
 `;
 
 const ScheduleButton = styled.button`
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background-color: #3f63ff;
   color: white;
-  padding: 8px 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -356,7 +363,6 @@ const Connect = styled.div`
 `;
 
 const ConnectTitle = styled.h4`
-  font-size: 16px;
   margin-bottom: 10px;
 `;
 
@@ -366,20 +372,20 @@ const SocialIcons = styled.div`
 `;
 
 const Icon = styled.span`
-  font-size: 24px;
+  font-size: 20px;
+  cursor: pointer;
 `;
 
 const AboutSection = styled.div`
-  margin-top: 20px;
-  padding: 20px;
+  margin-top: 30px;
   background-color: #fff;
-  border: 2px solid #0066ff;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 `;
 
-const AboutTitle = styled.h4`
-  font-size: 18px;
-  color: #333;
+const AboutTitle = styled.h3`
+  margin-bottom: 10px;
 `;
 
 const CalendarModal = styled.div`
@@ -387,18 +393,20 @@ const CalendarModal = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
+  background-color: white;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 `;
 
 const SendRequestButton = styled.button`
   margin-top: 10px;
+  padding: 5px 10px;
   background-color: #3f63ff;
   color: white;
-  padding: 8px 16px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 `;
+
+

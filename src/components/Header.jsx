@@ -1,23 +1,36 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 const Header = () => {
+  const location = useLocation();
+
   return (
-    <header>
     <HeaderContainer>
       <Logo>
-       Mentor<span>Mate</span>
+        Mentor<span>Mate</span>
       </Logo>
       <Nav>
-        <NavLink href="/main">Home</NavLink>
-        <NavLink href="/BlogPage">Blogs</NavLink>
-        <NavLink href="/Feedback">Feedback</NavLink>
-        <NavLink href="/BuildResume">Build Resume</NavLink>
-        <NavLink href="/login">Sign in</NavLink>
-        <NavLink href="/StudentProfile">Profile</NavLink>
+        <NavLink to="/" isActive={location.pathname === "/"}>
+          Home
+        </NavLink>
+        <NavLink to="/blogpage" isActive={location.pathname === "/blogpage"}>
+          Blogs
+        </NavLink>
+        <NavLink to="/feedback" isActive={location.pathname === "/feedback"}>
+          Feedback
+        </NavLink>
+        <NavLink to="/buildresume" isActive={location.pathname === "/buildresume"}>
+          Build Resume
+        </NavLink>
+        <NavLink to="/login" isActive={location.pathname === "/login"}>
+          Sign in
+        </NavLink>
+        <NavLink to="/studentprofile" isActive={location.pathname === "/studentprofile"}>
+          Profile
+        </NavLink>
       </Nav>
     </HeaderContainer>
-    </header>
   );
 };
 
@@ -26,12 +39,17 @@ export default Header;
 const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
-  padding: 15px ;
-padding-right: 35px;
+  padding: 15px;
+  padding-right: 35px;
   align-items: center;
   background-color: #000;
   color: #fff;
+  height: 100px;
 
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: auto;
+  }
 `;
 
 const Logo = styled.h1`
@@ -46,12 +64,18 @@ const Logo = styled.h1`
 const Nav = styled.nav`
   display: flex;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
-const NavLink = styled.a`
-  color: #fff;
+const NavLink = styled(Link)`
+  color: ${(props) => (props.isActive ? "#f1c40f" : "#fff")};
   text-decoration: none;
   font-size: 16px;
+  transition: color 0.3s;
 
   &:hover {
     text-decoration: underline;

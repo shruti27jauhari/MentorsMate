@@ -1,11 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const BlogPage = () => {
   return (
     <Container>
-    
-
       <Content>
         <Sidebar>
           <TopBlogs>
@@ -25,44 +23,52 @@ const BlogPage = () => {
 
         <MainContent>
           <BlogPost>
-            <BlogImage src="/agri.jpeg" alt="AgriTech Startups" />
+            <BlogImage src="agri.jpeg" alt="AgriTech Startups" />
             <PostInfo>
               <PostDate>29 Feb 2024, Thursday</PostDate>
-              <PostTitle>How are AgriTech Startups Revolutionising Farming Practices?</PostTitle>
+              <PostTitle>
+                How are AgriTech Startups Revolutionising Farming Practices?
+              </PostTitle>
               <PostDescription>
-                Enhancing efficiency, sustainability, and profitability in agriculture...
+                Enhancing efficiency, sustainability, and profitability in
+                agriculture...
               </PostDescription>
             </PostInfo>
           </BlogPost>
 
           <BlogPost>
-            <BlogImage src="/startup.jpeg" alt="Growth through Learning" />
+            <BlogImage src="startup.jpeg" alt="Growth through Learning" />
             <PostInfo>
               <PostDate>11 Jan 2024, Thursday</PostDate>
               <PostTitle>Growth through Learning with StartupShala</PostTitle>
               <PostDescription>
-                Learn the valuable lessons from StartupShala and how they empower startups...
+                Learn the valuable lessons from StartupShala and how they
+                empower startups...
               </PostDescription>
             </PostInfo>
           </BlogPost>
           <BlogPost>
-            <BlogImage src="/agri.jpeg" alt="AgriTech Startups" />
+            <BlogImage src="agri.jpeg" alt="AgriTech Startups" />
             <PostInfo>
               <PostDate>29 Feb 2024, Thursday</PostDate>
-              <PostTitle>How are AgriTech Startups Revolutionising Farming Practices?</PostTitle>
+              <PostTitle>
+                How are AgriTech Startups Revolutionising Farming Practices?
+              </PostTitle>
               <PostDescription>
-                Enhancing efficiency, sustainability, and profitability in agriculture...
+                Enhancing efficiency, sustainability, and profitability in
+                agriculture...
               </PostDescription>
             </PostInfo>
           </BlogPost>
 
           <BlogPost>
-            <BlogImage src="/startup.jpeg" alt="Growth through Learning" />
+            <BlogImage src="startup.jpeg" alt="Growth through Learning" />
             <PostInfo>
               <PostDate>11 Jan 2024, Thursday</PostDate>
               <PostTitle>Growth through Learning with StartupShala</PostTitle>
               <PostDescription>
-                Learn the valuable lessons from StartupShala and how they empower startups...
+                Learn the valuable lessons from StartupShala and how they
+                empower startups...
               </PostDescription>
             </PostInfo>
           </BlogPost>
@@ -131,7 +137,7 @@ const TopBlogs = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+
   border: grey 1px solid;
   padding: 10px;
 `;
@@ -208,5 +214,3 @@ const LoadMoreButton = styled.button`
     background-color: #0056b3;
   }
 `;
-
-

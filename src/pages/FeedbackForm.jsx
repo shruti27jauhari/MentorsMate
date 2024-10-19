@@ -1,29 +1,43 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { db } from '../firebase'; // Ensure you have the Firebase configuration file
-import { collection, addDoc } from 'firebase/firestore'; // Import necessary Firestore functions
+import { db } from "../firebase"; // Ensure you have the Firebase configuration file
+import { collection, addDoc } from "firebase/firestore"; // Import necessary Firestore functions
 
 const FeedbackForm = () => {
-  const [mentorName, setMentorName] = useState({ firstName: '', lastName: '' });
-  const [menteeName, setMenteeName] = useState({ firstName: '', lastName: '' });
-  const [comments, setComments] = useState('');
+  const [mentorName, setMentorName] = useState({ firstName: "", lastName: "" });
+  const [menteeName, setMenteeName] = useState({ firstName: "", lastName: "" });
+  const [comments, setComments] = useState("");
   const [evaluation, setEvaluation] = useState({
     criteria1: null,
     criteria2: null,
-    // Add more criteria if needed
+    criteria3: null,
+    criteria4: null,
+    criteria5: null,
   });
+  const [signatureImage, setSignatureImage] = useState(null); // State for signature image
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name.startsWith('mentor')) {
-      setMentorName({ ...mentorName, [name.split('_')[1]]: value });
-    } else if (name.startsWith('mentee')) {
-      setMenteeName({ ...menteeName, [name.split('_')[1]]: value });
-    } else if (name === 'comments') {
+    if (name.startsWith("mentor")) {
+      setMentorName({ ...mentorName, [name.split("_")[1]]: value });
+    } else if (name.startsWith("mentee")) {
+      setMenteeName({ ...menteeName, [name.split("_")[1]]: value });
+    } else if (name === "comments") {
       setComments(value);
     } else {
-      setEvaluation({ ...evaluation, [name]: value });
+      setEvaluation({ ...evaluation, [name]: parseInt(value) });
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSignatureImage(reader.result); // Set the image for display
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
     }
   };
 
@@ -32,10 +46,11 @@ const FeedbackForm = () => {
 
     try {
       await addDoc(collection(db, "feedback"), {
-        mentorName: mentorName,
-        menteeName: menteeName,
-        evaluation: evaluation,
-        comments: comments,
+        mentorName,
+        menteeName,
+        evaluation,
+        comments,
+        signatureImage, // Include the signature image in the submission if needed
       });
       alert("Feedback submitted successfully!");
     } catch (error) {
@@ -43,14 +58,17 @@ const FeedbackForm = () => {
     }
 
     // Reset form after submission
-    setMentorName({ firstName: '', lastName: '' });
-    setMenteeName({ firstName: '', lastName: '' });
-    setComments('');
+    setMentorName({ firstName: "", lastName: "" });
+    setMenteeName({ firstName: "", lastName: "" });
+    setComments("");
     setEvaluation({
       criteria1: null,
       criteria2: null,
-      // Reset other criteria if needed
+      criteria3: null,
+      criteria4: null,
+      criteria5: null,
     });
+    setSignatureImage(null); // Reset the signature image
   };
 
   return (
@@ -62,80 +80,142 @@ const FeedbackForm = () => {
 
         <Label>Name of Mentor</Label>
         <NameInputWrapper>
-          <Input type="text" name="mentor_firstName" value={mentorName.firstName} onChange={handleInputChange} placeholder="First Name" />
-          <Input type="text" name="mentor_lastName" value={mentorName.lastName} onChange={handleInputChange} placeholder="Last Name" />
+          <Input
+            type="text"
+            name="mentor_firstName"
+            value={mentorName.firstName}
+            onChange={handleInputChange}
+            placeholder="First Name"
+          />
+          <Input
+            type="text"
+            name="mentor_lastName"
+            value={mentorName.lastName}
+            onChange={handleInputChange}
+            placeholder="Last Name"
+          />
         </NameInputWrapper>
 
         <SectionTitle>Evaluation</SectionTitle>
         <Table>
-          <thead>
-            <tr>
-              <th>Criteria</th>
-              <th>Strongly Disagree</th>
-              <th>Disagree</th>
-              <th>Neutral</th>
-              <th>Agree</th>
-              <th>Strongly Agree</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>My mentor has been readily available and reachable.</td>
-              {Array.from({ length: 5 }, (_, index) => (
-                <td key={index}>
-                  <Radio type="radio" name="criteria1" value={index} checked={evaluation.criteria1 === index} onChange={handleInputChange} />
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>My mentor helped me deal with stress and well-being.</td>
-              {Array.from({ length: 5 }, (_, index) => (
-                <td key={index}>
-                  <Radio type="radio" name="criteria2" value={index} checked={evaluation.criteria2 === index} onChange={handleInputChange} />
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>My mentor helped me deal with stress and well-being.</td>
-              {Array.from({ length: 5 }, (_, index) => (
-                <td key={index}>
-                  <Radio type="radio" name="criteria2" value={index} checked={evaluation.criteria2 === index} onChange={handleInputChange} />
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>My mentor helped me deal with stress and well-being.</td>
-              {Array.from({ length: 5 }, (_, index) => (
-                <td key={index}>
-                  <Radio type="radio" name="criteria2" value={index} checked={evaluation.criteria2 === index} onChange={handleInputChange} />
-                </td>
-              ))}
-            </tr>
-            <tr>
-              <td>My mentor helped me deal with stress and well-being.</td>
-              {Array.from({ length: 5 }, (_, index) => (
-                <td key={index}>
-                  <Radio type="radio" name="criteria2" value={index} checked={evaluation.criteria2 === index} onChange={handleInputChange} />
-                </td>
-              ))}
-            </tr>
-            {/* Add more criteria rows as needed */}
-          </tbody>
-        </Table>
+  <thead>
+    <tr>
+      <th>Criteria</th>
+      <th>Strongly Disagree</th>
+      <th>Disagree</th>
+      <th>Neutral</th>
+      <th>Agree</th>
+      <th>Strongly Agree</th>
+    </tr>
+    <tr>
+      <th colSpan="6">Please rate the following statements based on your experience with your mentor:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>My mentor has been readily available and reachable.</td>
+      {Array.from({ length: 5 }, (_, index) => (
+        <td key={index}>
+          <Radio
+            type="radio"
+            name="criteria1"
+            value={index}
+            checked={evaluation.criteria1 === index}
+            onChange={handleInputChange}
+          />
+        </td>
+      ))}
+    </tr>
+    <tr>
+      <td>My mentor helped me deal with stress and well-being.</td>
+      {Array.from({ length: 5 }, (_, index) => (
+        <td key={index}>
+          <Radio
+            type="radio"
+            name="criteria2"
+            value={index}
+            checked={evaluation.criteria2 === index}
+            onChange={handleInputChange}
+          />
+        </td>
+      ))}
+    </tr>
+    <tr>
+      <td>My mentor provided valuable feedback on my work.</td>
+      {Array.from({ length: 5 }, (_, index) => (
+        <td key={index}>
+          <Radio
+            type="radio"
+            name="criteria3"
+            value={index}
+            checked={evaluation.criteria3 === index}
+            onChange={handleInputChange}
+          />
+        </td>
+      ))}
+    </tr>
+    <tr>
+      <td>My mentor encouraged my personal growth.</td>
+      {Array.from({ length: 5 }, (_, index) => (
+        <td key={index}>
+          <Radio
+            type="radio"
+            name="criteria4"
+            value={index}
+            checked={evaluation.criteria4 === index}
+            onChange={handleInputChange}
+          />
+        </td>
+      ))}
+    </tr>
+    <tr>
+      <td>Overall, I am satisfied with my mentoring experience.</td>
+      {Array.from({ length: 5 }, (_, index) => (
+        <td key={index}>
+          <Radio
+            type="radio"
+            name="criteria5"
+            value={index}
+            checked={evaluation.criteria5 === index}
+            onChange={handleInputChange}
+          />
+        </td>
+      ))}
+    </tr>
+    {/* Add more criteria rows as needed */}
+  </tbody>
+</Table>
 
         <Label>Comments</Label>
-        <FeedbackTextarea name="comments" value={comments} onChange={handleInputChange} placeholder="Add any comments here..." />
+        <FeedbackTextarea
+          name="comments"
+          value={comments}
+          onChange={handleInputChange}
+          placeholder="Add any comments here..."
+        />
 
         <Label>Name of Mentee</Label>
         <NameInputWrapper>
-          <Input type="text" name="mentee_firstName" value={menteeName.firstName} onChange={handleInputChange} placeholder="First Name" />
-          <Input type="text" name="mentee_lastName" value={menteeName.lastName} onChange={handleInputChange} placeholder="Last Name" />
+          <Input
+            type="text"
+            name="mentee_firstName"
+            value={menteeName.firstName}
+            onChange={handleInputChange}
+            placeholder="First Name"
+          />
+          <Input
+            type="text"
+            name="mentee_lastName"
+            value={menteeName.lastName}
+            onChange={handleInputChange}
+            placeholder="Last Name"
+          />
         </NameInputWrapper>
 
         <Label>Signature</Label>
         <SignatureBox>
-          <SignatureImage src="signature.png" alt="Signature" />{" "}
-          {/* Add a signature image */}
+          <input type="file" accept="image/*" onChange={handleFileChange} />
+          <SignatureImage src={signatureImage || "signature.png"} alt="Signature" />
         </SignatureBox>
 
         <SubmitButton type="submit">Submit</SubmitButton>
@@ -151,7 +231,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
   background: #f7f7f7;
   min-height: 100vh;
 `;
@@ -189,6 +268,8 @@ const Label = styled.label`
   font-size: 16px;
   font-weight: 500;
   margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px;
 `;
 
 const NameInputWrapper = styled.div`
@@ -237,27 +318,27 @@ const FeedbackTextarea = styled.textarea`
 `;
 
 const SignatureBox = styled.div`
-  width: 100%;
-  height: 100px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-top: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
 `;
 
-const SignatureImage = styled.img`
-  max-height: 80px;
-`;
-
 const SubmitButton = styled.button`
-  background-color: #28a745;
-  color: #fff;
-  padding: 10px 20px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
   border: none;
   border-radius: 5px;
-  font-size: 18px;
-  margin-top: 20px;
+  font-size: 16px;
   cursor: pointer;
+  margin-top: 20px;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const SignatureImage = styled.img`
+  width: 200px; // Adjust the size as needed
+  height: auto;
+  margin-top: 10px; // Add spacing above the image
 `;

@@ -36,6 +36,11 @@ const MainPage = () => {
   return (
     <Container>
       <HeroSection>
+        <BackgroundVideo autoPlay muted loop>
+          <source src="3.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </BackgroundVideo>
+        <Overlay />
         <SubHeading>Get right mentorship, land dream career</SubHeading>
         <MainHeading>
           1-on-1 <Highlight>Career</Highlight> | Mentorship
@@ -61,7 +66,7 @@ const MainPage = () => {
         {/* Add ref to MentorSlider */}
         {/* Mentor Card 1 */}
         <MentorCard onClick={handleMentorClick}>
-          <MentorImage src="/random1.jpeg" alt="Mentor" />
+          <MentorImage src="random1.jpeg" alt="Mentor" />
           <MentorInfo>
             <MentorName>Rajesh Kumar</MentorName>
             <MentorTitle>Senior Software Engineer</MentorTitle>
@@ -73,7 +78,7 @@ const MainPage = () => {
           </MentorInfo>
         </MentorCard>
         <MentorCard onClick={handleMentorClick}>
-          <MentorImage src="/random6.jpg" alt="Mentor" />
+          <MentorImage src="random6.jpg" alt="Mentor" />
           <MentorInfo>
             <MentorName>Neha Patel</MentorName>
             <MentorTitle>UX/UI Designer</MentorTitle>
@@ -85,7 +90,7 @@ const MainPage = () => {
           </MentorInfo>
         </MentorCard>
         <MentorCard onClick={handleMentorClick}>
-          <MentorImage src="/random2.jpeg" alt="Mentor" />
+          <MentorImage src="random2.jpeg" alt="Mentor" />
           <MentorInfo>
             <MentorName>Amit Sharma</MentorName>
             <MentorTitle>Data Scientist</MentorTitle>
@@ -97,7 +102,7 @@ const MainPage = () => {
           </MentorInfo>
         </MentorCard>
         <MentorCard onClick={handleMentorClick}>
-          <MentorImage src="/random3.jpeg" alt="Mentor" />
+          <MentorImage src="random3.jpeg" alt="Mentor" />
           <MentorInfo>
             <MentorName>Pooja Gupta</MentorName>
             <MentorTitle>Product Manager</MentorTitle>
@@ -109,7 +114,7 @@ const MainPage = () => {
           </MentorInfo>
         </MentorCard>
         <MentorCard onClick={handleMentorClick}>
-          <MentorImage src="/random4.jpeg" alt="Mentor" />
+          <MentorImage src="random4.jpeg" alt="Mentor" />
           <MentorInfo>
             <MentorName>Vikram Singh</MentorName>
             <MentorTitle>Full Stack Developer</MentorTitle>
@@ -121,7 +126,7 @@ const MainPage = () => {
           </MentorInfo>
         </MentorCard>
         <MentorCard onClick={handleMentorClick}>
-          <MentorImage src="/random6.jpg" alt="Mentor" />
+          <MentorImage src="random6.jpg" alt="Mentor" />
           <MentorInfo>
             <MentorName>Simran Kaur</MentorName>
             <MentorTitle>Digital Marketing Specialist</MentorTitle>
@@ -146,18 +151,50 @@ const Container = styled.div`
 `;
 
 const HeroSection = styled.section`
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
   text-align: center;
   padding: 60px;
+  height: 600px;
+  position: relative; /* Added for positioning */
+  overflow: hidden; /* Prevents overflow of video */
 `;
 
-const SubHeading = styled.h3`
-  color: #555;
+const BackgroundVideo = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the video covers the section */
+  filter: blur(5px); /* Blurs the video */
+  z-index: 0; /* Puts video behind other content */
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay for better text visibility */
+  z-index: 1; /* Places overlay above the video */
+`;
+
+const SubHeading = styled.h2`
+  color: #fff; /* Changed color for visibility */
+  z-index: 1; /* Places text above the video */
+  position: relative; /* Added for stacking context */
 `;
 
 const MainHeading = styled.h1`
-  font-size: 48px;
-  color: #333;
+  font-size: 68px;
+  color: #fff; /* Changed color for visibility */
   margin: 20px 0;
+  z-index: 1; /* Places text above the video */
+  position: relative; /* Added for stacking context */
 `;
 
 const Highlight = styled.span`
@@ -173,6 +210,8 @@ const CTAButton = styled.button`
   border-radius: 5px;
   margin: 30px 0;
   cursor: pointer;
+  z-index: 1; /* Places button above the video */
+  position: relative; /* Added for stacking context */
 `;
 
 const StatsSection = styled.div`
@@ -188,20 +227,21 @@ const Stat = styled.div`
 
 const StatNumber = styled.h2`
   font-size: 32px;
-  color: #333;
+  color: #fff; /* Changed color for visibility */
 `;
 
 const StatText = styled.p`
   font-size: 18px;
-  color: #666;
+  color: #ddd; /* Changed color for visibility */
 `;
 
 const MentorSlider = styled.div`
   display: flex;
   overflow-x: auto;
-  padding: 20px;
+  padding: 40px;
   background-color: #e4e7ff;
-  scroll-behavior: smooth; /* Smooth scrolling effect */
+  scroll-behavior: smooth;
+  margin: 20px;
 `;
 
 const MentorCard = styled.div`
@@ -211,7 +251,7 @@ const MentorCard = styled.div`
   display: flex;
   align-items: center;
   margin-right: 20px;
-  cursor: pointer; /* Change cursor to indicate clickable */
+  cursor: pointer;
 `;
 
 const MentorImage = styled.img`

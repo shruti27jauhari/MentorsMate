@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FaCheckCircle } from "react-icons/fa";
 import jsPDF from "jspdf";
 
+// Styled components
 const PageWrapper = styled.div`
   display: flex;
   overflow: hidden;
@@ -32,6 +33,7 @@ const VerticalLine = styled.div`
 
 const SidebarItem = styled.div`
   margin-bottom: 20px;
+  margin-top: 20px;
   font-size: 18px;
   color: #4267b2;
   cursor: pointer;
@@ -48,15 +50,15 @@ const CheckmarkIcon = styled(FaCheckCircle)`
 
 const MainContent = styled.div`
   padding: 20px;
-  padding-left: 60px;
+  padding-left: 90px;
   padding-right: 60px;
   overflow-y: auto;
   height: 100vh;
-  width: 800px;
+  width: 80%;
 `;
 
 const FormSection = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 `;
 
 const InputField = styled.input`
@@ -69,7 +71,7 @@ const InputField = styled.input`
 
 const TextArea = styled.textarea`
   width: 100%;
-  padding: 10px;
+  padding: 30px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -78,11 +80,12 @@ const TextArea = styled.textarea`
 
 const Label = styled.label`
   font-size: 14px;
-  margin-bottom: 5px;
+  margin-top: 15px;
   display: block;
 `;
 
 const SkillList = styled.div`
+  margin-top: 5px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -99,16 +102,18 @@ const CheckBox = styled.input`
 `;
 
 const TemplatePreview = styled.div`
-  width: 280px;
+  width: 220px;
   background-color: #f4f6f9;
   padding: 20px;
-  position: fixed;
   right: 0;
-  margin: 10px;
+  margin: 60px;
+  margin-bottom: 6px;
   height: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
+  z-index: 1;
 `;
 
 const SubmitButton = styled.button`
@@ -171,6 +176,13 @@ const BuildResume = () => {
       const skills = prevData.skills.includes(value)
         ? prevData.skills.filter((skill) => skill !== value)
         : [...prevData.skills, value];
+
+      // Mark skills section as complete if at least one skill is selected
+      setCompletion((prevCompletion) => ({
+        ...prevCompletion,
+        skills: skills.length > 0,
+      }));
+
       return { ...prevData, skills };
     });
   };
@@ -178,8 +190,7 @@ const BuildResume = () => {
   // Generate PDF
   const generatePDF = () => {
     const doc = new jsPDF();
-
-    // Add content to PDF
+    // Add content to PDF (same as before)
     doc.setFontSize(22);
     doc.text(
       `Resume of ${resumeData.firstName} ${resumeData.lastName}`,
@@ -190,7 +201,6 @@ const BuildResume = () => {
     doc.text(`Profession: ${resumeData.profession}`, 20, 50);
     doc.text(`Phone: ${resumeData.phone}`, 20, 60);
     doc.text(`Email: ${resumeData.email}`, 20, 70);
-
     doc.setFontSize(20);
     doc.text("Work History", 20, 90);
     doc.setFontSize(16);
@@ -198,24 +208,20 @@ const BuildResume = () => {
     doc.text(`Employer: ${resumeData.employer}`, 20, 120);
     doc.text(`Start Date: ${resumeData.startDate}`, 20, 130);
     doc.text(`End Date: ${resumeData.endDate}`, 20, 140);
-
     doc.setFontSize(20);
     doc.text("Education", 20, 160);
     doc.setFontSize(16);
     doc.text(`Degree: ${resumeData.degree}`, 20, 180);
     doc.text(`School: ${resumeData.school}`, 20, 190);
     doc.text(`Graduation Year: ${resumeData.graduationYear}`, 20, 200);
-
     doc.setFontSize(20);
     doc.text("Skills", 20, 220);
     doc.setFontSize(16);
     doc.text(resumeData.skills.join(", "), 20, 240);
-
     doc.setFontSize(20);
     doc.text("Summary", 20, 260);
     doc.setFontSize(16);
     doc.text(resumeData.summary, 20, 280);
-
     // Save the PDF
     doc.save(`${resumeData.firstName}_${resumeData.lastName}_Resume.pdf`);
   };
@@ -250,6 +256,7 @@ const BuildResume = () => {
       <MainContent>
         <h2>Resume Builder</h2>
 
+        {/* Personal Details Section */}
         <FormSection>
           <h3>Personal Details</h3>
           <Label>First Name</Label>
@@ -290,6 +297,7 @@ const BuildResume = () => {
           />
         </FormSection>
 
+        {/* Work History Section */}
         <FormSection>
           <h3>Work History</h3>
           <Label>Job Title</Label>
@@ -307,22 +315,17 @@ const BuildResume = () => {
             onChange={handleChange}
           />
           <Label>Start Date</Label>
-          <InputField
-            name="startDate"
-            type="text"
-            placeholder="Start Date"
-            onChange={handleChange}
-          />
+          <InputField name="startDate" type="date" onChange={handleChange} />
           <Label>End Date</Label>
           <InputField
             name="endDate"
-            type="text"
-            placeholder="End Date"
+            type="date"
             onChange={handleChange}
             onBlur={() => handleSectionComplete("workHistory")}
           />
         </FormSection>
 
+        {/* Education Section */}
         <FormSection>
           <h3>Education</h3>
           <Label>Degree</Label>
@@ -349,58 +352,37 @@ const BuildResume = () => {
           />
         </FormSection>
 
+        {/* Skills Section */}
         <FormSection>
           <h3>Skills</h3>
           <SkillList>
-            <SkillItem>
-              <CheckBox
-                type="checkbox"
-                value="JavaScript"
-                onChange={handleSkillChange}
-              />
-              JavaScript
-            </SkillItem>
-            <SkillItem>
-              <CheckBox
-                type="checkbox"
-                value="React"
-                onChange={handleSkillChange}
-              />
-              React
-            </SkillItem>
-            <SkillItem>
-              <CheckBox
-                type="checkbox"
-                value="CSS"
-                onChange={handleSkillChange}
-              />
-              CSS
-            </SkillItem>
-            <SkillItem>
-              <CheckBox
-                type="checkbox"
-                value="Node.js"
-                onChange={handleSkillChange}
-              />
-              Node.js
-            </SkillItem>
+            {["JavaScript", "React", "Node.js", "CSS"].map((skill) => (
+              <SkillItem key={skill}>
+                <CheckBox
+                  type="checkbox"
+                  value={skill}
+                  onChange={handleSkillChange}
+                />
+                {skill}
+              </SkillItem>
+            ))}
           </SkillList>
         </FormSection>
 
+        {/* Summary Section */}
         <FormSection>
           <h3>Summary</h3>
           <TextArea
             name="summary"
-            placeholder="Summary"
+            placeholder="Write a brief summary about yourself..."
             onChange={handleChange}
             onBlur={() => handleSectionComplete("summary")}
           />
         </FormSection>
 
-        <SubmitButton onClick={generatePDF}>Download Resume</SubmitButton>
+        <SubmitButton onClick={generatePDF}>Download PDF</SubmitButton>
       </MainContent>
 
-      {/* Right Sidebar - Template Preview */}
       <TemplatePreview>
         <h3>Your Resume Preview</h3>
         <div>
@@ -413,7 +395,7 @@ const BuildResume = () => {
               height: "260px",
             }}
           >
-            <img src="/template.jpeg" alt="" />
+            <img src="template.jpeg" alt="" />
           </div>
         </div>
         <p>Change Template</p>
@@ -421,5 +403,4 @@ const BuildResume = () => {
     </PageWrapper>
   );
 };
-
 export default BuildResume;

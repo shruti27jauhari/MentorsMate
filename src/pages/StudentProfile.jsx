@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -37,7 +37,7 @@ const ProfileSection = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 100%; /* Changed to full width */
+  width: 100%;
   padding: 20px;
   padding-top: 30px;
   padding-bottom: 30px;
@@ -49,7 +49,7 @@ const ProfileSection = styled.div`
 
 const ProfileInfo = styled.div`
   display: flex;
-  flex-direction: row; /* Keeps profile image and name in a row */
+  flex-direction: row;
   align-items: center;
   gap: 20px;
 `;
@@ -67,19 +67,19 @@ const ProfileName = styled.h2`
 
 const UpcomingSessionsSection = styled.div`
   display: flex;
-  flex-direction: column; /* Stack heading and session boxes vertically */
+  flex-direction: column;
   margin-left: 30px;
 `;
 
 const UpcomingSessionsHeading = styled.h3`
-  margin-bottom: 10px; /* Space between heading and session boxes */
+  margin-bottom: 10px;
 `;
 
 const UpcomingSessions = styled.div`
   display: flex;
-  flex-direction: row; /* Stack session boxes vertically */
-  gap: 10px; /* Space between session boxes */
-  width: 100%; /* Full width of the container */
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
 `;
 
 const SessionBox = styled.div`
@@ -88,7 +88,7 @@ const SessionBox = styled.div`
   border-radius: 5px;
   color: black;
   text-align: center;
-  width: 100%; /* Full width of the container */
+  width: 100%;
 `;
 
 const LayoutContainer = styled.div`
@@ -134,7 +134,7 @@ const MentorRecommendation = styled.div`
   border: 1px solid grey;
   padding: 10px;
   justify-content: center;
-  grid-template-columns: repeat(2, 1fr); /* Two cards per row */
+  grid-template-columns: repeat(2, 1fr);
   margin-top: 30px;
 `;
 
@@ -186,17 +186,46 @@ const NotificationText = styled.p`
 `;
 
 const StudentProfile = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const mentors = [
+    {
+      name: 'Prof. Aarti Singh',
+      title: 'Technical Program Manager - Google',
+      tags: ['Program Management', 'Project Management', 'Software Engineering'],
+    },
+    {
+      name: 'Prof. Ravi Mehta',
+      title: 'Cybersecurity Senior Consultant',
+      tags: ['Information Security', 'Cloud Security', 'Security Architecture'],
+    },
+    {
+      name: 'Prof. Neelam Patel',
+      title: 'Research & Development',
+      tags: ['Data Science', 'Statistics', 'Python'],
+    },
+    {
+      name: 'Prof. Vikram Sharma',
+      title: 'Senior Software Engineer - Microsoft',
+      tags: ['.NET', 'ASP.NET Core', 'Web Development'],
+    },
+  ];
+
+  // Filter mentors based on the search term
+  const filteredMentors = mentors.filter((mentor) =>
+    mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    mentor.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    mentor.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <Container>
-     
       <ProfileSection>
-        {/* Profile Information Section */}
         <ProfileInfo>
           <ProfileImage src="profile1.jpg" alt="Profile" />
           <ProfileName>Ms. Shruti Jauhari</ProfileName>
         </ProfileInfo>
 
-        {/* Upcoming Sessions Section */}
         <UpcomingSessionsSection>
           <UpcomingSessionsHeading>Upcoming Sessions</UpcomingSessionsHeading>
           <UpcomingSessions>
@@ -212,61 +241,35 @@ const StudentProfile = () => {
         </UpcomingSessionsSection>
       </ProfileSection>
 
-      {/* Layout for Mentor Section and Notifications */}
       <LayoutContainer>
-        {/* Left Section with Search and Mentor Cards */}
         <LeftSection>
           <SearchMentorSection>
             <SearchBox>
-              <SearchInput type="text" placeholder="Search by company, skills or experience" />
+              <SearchInput
+                type="text"
+                placeholder="Search by name, title or tags"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <SearchButton>Find Mentors</SearchButton>
             </SearchBox>
           </SearchMentorSection>
 
           <MentorRecommendation>
-            <MentorCard>
-              <MentorName>Prof. Aarti Singh</MentorName>
-              <p>Technical Program Manager - Google</p>
-              <MentorTags>
-                <Tag>Program Management</Tag>
-                <Tag>Project Management</Tag>
-                <Tag>Software Engineering</Tag>
-              </MentorTags>
-            </MentorCard>
-
-            <MentorCard>
-              <MentorName>Prof. Ravi Mehta</MentorName>
-              <p>Cybersecurity Senior Consultant</p>
-              <MentorTags>
-                <Tag>Information Security</Tag>
-                <Tag>Cloud Security</Tag>
-                <Tag>Security Architecture</Tag>
-              </MentorTags>
-            </MentorCard>
-
-            <MentorCard>
-              <MentorName>Prof. Neelam Patel</MentorName>
-              <p>Research & Development</p>
-              <MentorTags>
-                <Tag>Data Science</Tag>
-                <Tag>Statistics</Tag>
-                <Tag>Python</Tag>
-              </MentorTags>
-            </MentorCard>
-
-            <MentorCard>
-              <MentorName>Prof. Vikram Sharma</MentorName>
-              <p>Senior Software Engineer - Microsoft</p>
-              <MentorTags>
-                <Tag>.NET</Tag>
-                <Tag>ASP.NET Core</Tag>
-                <Tag>Web Development</Tag>
-              </MentorTags>
-            </MentorCard>
+            {filteredMentors.map((mentor, index) => (
+              <MentorCard key={index}>
+                <MentorName>{mentor.name}</MentorName>
+                <p>{mentor.title}</p>
+                <MentorTags>
+                  {mentor.tags.map((tag, idx) => (
+                    <Tag key={idx}>{tag}</Tag>
+                  ))}
+                </MentorTags>
+              </MentorCard>
+            ))}
           </MentorRecommendation>
         </LeftSection>
 
-        {/* Notifications Section on the Right */}
         <NotificationSection>
           <h3>Notifications</h3>
           <NotificationItem>
